@@ -470,7 +470,7 @@ class App:
             for reaction in message.get('reactions', [])
         ]
 
-        responses = ['1' for response in message.get('replies', [])]
+        responses = message.get('replies', [])
 
         attachments = []
         for attachment in message.get('attachments', []):
