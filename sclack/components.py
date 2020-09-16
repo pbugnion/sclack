@@ -14,7 +14,7 @@ from sclack.utils.channel import is_group, is_channel, is_dm
 from sclack.utils.message import format_date_time
 
 
-MARK_READ_ALARM_PERIOD = 3
+MARK_READ_ALARM_PERIOD = 80000
 
 
 def get_icon(name):
