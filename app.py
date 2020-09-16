@@ -8,6 +8,7 @@ import requests
 import sys
 import time
 import traceback
+import logging
 import tempfile
 import urwid
 from datetime import datetime
@@ -25,6 +26,8 @@ from sclack.themes import themes
 
 from sclack.widgets.set_snooze import SetSnoozeWidget
 from sclack.utils.channel import is_dm, is_group, is_channel
+
+logging.basicConfig(level=logging.INFO, filename="sclack-logs.txt")
 
 loop = asyncio.get_event_loop()
 
@@ -45,6 +48,7 @@ class App:
     message_box = None
 
     def _exception_handler(self, loop, context):
+        logging.exception("Something went wrong")
         try:
             exception = context.get('exception')
             if not exception:
