@@ -586,10 +586,11 @@ class MessagePrompt(urwid_readline.ReadlineEdit):
     signals = ['submit_message', 'go_to_last_message']
 
     def __init__(self, user):
-        super(MessagePrompt, self).__init__([('prompt', ' {}'.format(user)), ' '])
+        caption = [('prompt', ' {}'.format(user)), ' ']
+        super(MessagePrompt, self).__init__(caption=caption, multiline=True)
 
     def keypress(self, size, key):
-        if key == 'enter':
+        if key == 'meta s':
             urwid.emit_signal(self, 'submit_message', self.get_edit_text())
             return True
         elif key == 'up':
