@@ -307,7 +307,6 @@ class App:
         )
         self.chatbox = ChatBox(messages, header, self.message_box, self.urwid_loop)
         urwid.connect_signal(self.chatbox, 'set_insert_mode', self.set_insert_mode)
-        urwid.connect_signal(self.chatbox, 'mark_read', self.handle_mark_read)
         urwid.connect_signal(self.chatbox, 'open_quick_switcher', self.open_quick_switcher)
         urwid.connect_signal(self.chatbox, 'open_set_snooze', self.open_set_snooze)
 
@@ -410,7 +409,6 @@ class App:
             urwid.connect_signal(message, 'go_to_sidebar', self.go_to_sidebar)
             urwid.connect_signal(message, 'quit_application', self.quit_application)
             urwid.connect_signal(message, 'set_insert_mode', self.set_insert_mode)
-            urwid.connect_signal(message, 'mark_read', self.handle_mark_read)
 
             return message
 
@@ -523,7 +521,6 @@ class App:
         urwid.connect_signal(message, 'delete_message', self.delete_message)
         urwid.connect_signal(message, 'quit_application', self.quit_application)
         urwid.connect_signal(message, 'set_insert_mode', self.set_insert_mode)
-        urwid.connect_signal(message, 'mark_read', self.handle_mark_read)
         urwid.connect_signal(message, 'toggle_thread', self.toggle_thread)
 
         return message
@@ -594,50 +591,8 @@ class App:
 
         return _messages
 
-    def handle_mark_read(self, data):
-        """
-        Mark as read to bottom
-        :return:
-        """
-        row_index = data if data is not None else -1
-
-        def read(*kwargs):
-            loop.create_task(
-                self.mark_read_slack(row_index)
-            )
-
-        now = time.time()
-        if now - self.last_keypress[0] < MARK_READ_ALARM_PERIOD and self.last_keypress[1] is not None:
-            self.urwid_loop.remove_alarm(self.last_keypress[1])
-
-        self.last_keypress = (now, self.urwid_loop.set_alarm_in(MARK_READ_ALARM_PERIOD, read))
-
     def scroll_messages(self, *args):
         index = self.chatbox.body.scroll_to_new_messages()
-        loop.create_task(
-            self.mark_read_slack(index)
-        )
-
-    @asyncio.coroutine
-    def mark_read_slack(self, index):
-        if not self.is_chatbox_rendered:
-            return
-
-        if index is None or index == -1:
-            index = len(self.chatbox.body.body) - 1
-
-        if len(self.chatbox.body.body) > index:
-            message = self.chatbox.body.body[index]
-
-            # Only apply for message
-            if not hasattr(message, 'channel_id'):
-                if len(self.chatbox.body.body) > index + 1:
-                    message = self.chatbox.body.body[index + 1]
-                else:
-                    message = self.chatbox.body.body[index - 1]
-
-            if message.channel_id:
-                self.store.mark_read(message.channel_id, message.ts)
 
     @asyncio.coroutine
     def _go_to_channel(self, channel_id):
@@ -864,7 +819,6 @@ class App:
                         'user': self.store.state.auth['user_id']
                     }]))
                     self.chatbox.body.scroll_to_bottom()
-                    self.handle_mark_read(-1)
                 else:
                     pass
                     # print(json.dumps(event, indent=2))
