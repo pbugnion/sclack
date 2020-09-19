@@ -12,7 +12,7 @@ import logging
 import tempfile
 import urwid
 from datetime import datetime
-from sclack.components import Attachment, Channel, ChannelHeader, ChatBox, Dm
+from sclack.components import Attachment, Channel, ChannelHeader, ChatBox, Dm, MARK_READ_ALARM_PERIOD
 from sclack.components import Indicators, MarkdownText, MessageBox
 from sclack.component.message import Message
 from sclack.components import NewMessagesDivider, Profile, ProfileSideBar
@@ -32,7 +32,6 @@ logging.basicConfig(level=logging.INFO, filename="sclack-logs.txt")
 loop = asyncio.get_event_loop()
 
 SCLACK_SUBTYPE = 'sclack_message'
-MARK_READ_ALARM_PERIOD = 3
 
 
 class SclackEventLoop(urwid.AsyncioEventLoop):
