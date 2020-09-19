@@ -470,7 +470,7 @@ class App:
             for reaction in message.get('reactions', [])
         ]
 
-        responses = message.get('replies', [])
+        response_count = message.get('reply_count', 0)
 
         attachments = []
         for attachment in message.get('attachments', []):
@@ -512,7 +512,7 @@ class App:
             indicators,
             attachments=attachments,
             reactions=reactions,
-            responses=responses
+            response_count=response_count
         )
 
         self.lazy_load_images(files, message)

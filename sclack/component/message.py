@@ -22,7 +22,7 @@ class Message(urwid.AttrMap):
         'toggle_thread',
     ]
 
-    def __init__(self, ts, channel_id, user, text, indicators, reactions=(), attachments=(), responses=()):
+    def __init__(self, ts, channel_id, user, text, indicators, reactions=(), attachments=(), response_count=0):
         self.ts = ts
         self.channel_id = channel_id
         self.user_id = user.id
@@ -38,8 +38,8 @@ class Message(urwid.AttrMap):
                 ('pack', reaction) for reaction in reactions
             ]))
 
-        if responses:
-            main_column.append(ThreadText(len(responses)))
+        if response_count > 0:
+            main_column.append(ThreadText(response_count))
 
         self.main_column = urwid.Pile(main_column)
         columns = [
